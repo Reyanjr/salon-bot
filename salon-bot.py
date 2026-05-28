@@ -12,21 +12,14 @@ SPREADSHEET_ID = "1dEHuvkLVBRjYcKsiX2Y1xOSH8nXTaVhdzrPTDubzN_4"
 
 # Google Sheets setup
 def get_sheet():
-    import json
+    import json, base64
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-    creds_dict = {
-        "type": "service_account",
-        "project_id": os.environ.get("GOOGLE_PROJECT_ID"),
-        "private_key_id": os.environ.get("GOOGLE_PRIVATE_KEY_ID"),
-        "private_key": os.environ.get("GOOGLE_PRIVATE_KEY").replace("\\n", "\n"),
-        "client_email": os.environ.get("GOOGLE_CLIENT_EMAIL"),
-        "client_id": os.environ.get("GOOGLE_CLIENT_ID"),
-        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-        "token_uri": "https://oauth2.googleapis.com/token",
-    }
+    creds_json = base64.b64decode(os.environ.get("GOOGLE_CREDENTIALS_B64")).decode("utf-8")
+    creds_dict = json.loads(creds_json)
     creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
     client = gspread.authorize(creds)
     return client.open_by_key(SPREADSHEET_ID).sheet1
+
 # Conversation states
 NAME, PHONE, SERVICE, DATE, TIME = range(5)
 
