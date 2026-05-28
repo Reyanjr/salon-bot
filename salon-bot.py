@@ -12,8 +12,10 @@ SPREADSHEET_ID = "1dEHuvkLVBRjYcKsiX2Y1xOSH8nXTaVhdzrPTDubzN_4"
 
 # Google Sheets setup
 def get_sheet():
+    import json
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-    creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
+    creds_json = json.loads(os.environ.get("GOOGLE_CREDENTIALS"))
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_json, scope)
     client = gspread.authorize(creds)
     return client.open_by_key(SPREADSHEET_ID).sheet1
 
